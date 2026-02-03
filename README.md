@@ -71,3 +71,12 @@ FLERE UNITTEST
 
 EGET REPO
 ![alt text](<Skærmbillede 2026-02-03 kl. 11.25.30-1.png>)
+
+AUTOMATISK TEST VED PUSH - IGANG
+![alt text](<Skærmbillede 2026-02-03 kl. 11.42.26.png>)
+
+AUTOMATISK TEST VED PUSH - AFSLUTTET
+![alt text](<Skærmbillede 2026-02-03 kl. 11.44.19.png>)
+
+DETALJERET BESKRIVELSE AF TEST
+![alt text](<Skærmbillede 2026-02-03 kl. 11.44.08.png>)
