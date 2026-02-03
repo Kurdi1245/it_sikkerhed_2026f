@@ -25,4 +25,4 @@ jobs:
         pip install -r requirements.txt
 
     - name: Kør pytest
-      run: pytest tests/ --verbose
+      run: pytest test/ --verbose
