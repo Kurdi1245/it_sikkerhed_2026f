@@ -65,4 +65,9 @@ Koden og løsningerne er **ikke beregnet til produktionsbrug** uden yderligere t
 ---
 
 ![alt text](<Skærmbillede 2026-02-03 kl. 11.03.21.png>)
+
+FLERE UNITTEST
 ![alt text](<Skærmbillede 2026-02-03 kl. 11.25.30.png>)
+
+EGET REPO
+![alt text](<Skærmbillede 2026-02-03 kl. 11.25.30-1.png>)
