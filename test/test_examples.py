@@ -6,8 +6,8 @@ def test_pass():
 
 
 def test_fail():
-    # Nu rettet – ellers ville den fejle
-    assert 1 * 1 == 1           # ← rettet fra 3 til 1
+    # Denne test vil fejle (assertion fejler)
+    assert 1 * 1 == 3
 
 
 @pytest.mark.skip(reason="Springes over med vilje")
@@ -17,24 +17,24 @@ def test_skip():
 
 
 def test_crash():
-    # Fjernet crash – nu bare en normal test
-    assert True                     # eller fjern assert helt
+    # Denne test crasher (exception før assert)
+    raise RuntimeError("Test crashede med vilje")
+    assert False                    # når aldrig hertil
 
 
-# ─────────────── Nye simple tests – rettet ───────────────
+# ─────────────── Nye simple tests ───────────────
 
 def test_fail_2():
-    # Nu passer den
-    assert "hej" == "hej"           # ← rettet fra "hello"
+    # En anden måde at fejle på – simpel sammenligning
+    assert "hej" == "hello"
 
 
 def test_crash_2():
-    # Fjernet division med nul
-    x = 100 / 1                     # ← rettet fra 0 til 1
-    assert x == 100
+    # Simpel division med nul → crasher
+    x = 100 / 0
 
 
 def test_fail_3():
-    # Nu passer listen
-    frugter = ["æble", "pære", "banan", "appelsin"]  # ← tilføjet appelsin
+    # Fejler på liste-indhold (meget almindeligt)
+    frugter = ["æble", "pære", "banan"]
     assert "appelsin" in frugter
