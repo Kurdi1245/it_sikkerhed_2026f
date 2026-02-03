@@ -1,6 +1,7 @@
 ---
 
 # 📘 Skoleprojekt – IT-Sikkerhed (2. semester)
+Ali001
 
 Dette repository indeholder et **skoleprojekt udarbejdet på Zealand – Sjællands Erhvervsakademi, Næstved**, som en del af **IT-Sikkerhed-uddannelsen på 2. semester**.
 
