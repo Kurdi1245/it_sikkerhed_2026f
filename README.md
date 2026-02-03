@@ -80,3 +80,6 @@ AUTOMATISK TEST VED PUSH - AFSLUTTET
 
 DETALJERET BESKRIVELSE AF TEST
 ![alt text](<Skærmbillede 2026-02-03 kl. 11.44.08.png>)
+
+NY BRANCH FOR AT TEST - ALT RETTET
+![alt text](<Skærmbillede 2026-02-03 kl. 12.36.38.png>)
