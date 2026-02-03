@@ -63,3 +63,5 @@ Koden og løsningerne er **ikke beregnet til produktionsbrug** uden yderligere t
 📚 IT-Sikkerhed – 2. semester
 
 ---
+
+![alt text](<Skærmbillede 2026-02-03 kl. 11.03.21.png>)
