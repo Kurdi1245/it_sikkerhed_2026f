@@ -6,7 +6,7 @@
       "last_name": "Test",
       "address": "RamVej",
       "street_number": 1,
-      "password": "$argon2id$v=19$m=102400,t=2,p=8$XVIA86P/gBhGxMyGlUcVJg$tOJ1X3B5Wx+SfhfyrlTW5Bk+6F/RWfP73F3DSjOY+jQ",
+      "password": "$argon2id$v=19$m=102400,t=2,p=8$bH0pgUk2bmIHa8leXCmCWg$cm3VrtWC8YMwJRiHYb0m7wu2E6cs8g0pPsQ/SdY3ipE",
       "enabled": true
     }
   ]
