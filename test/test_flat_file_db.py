@@ -162,7 +162,7 @@ def test_disable_ikke_eksisterende_bruger_returnerer_False():
     
     # Vis besked i terminalen hvis brugeren ikke findes
     if result is None:
-        print("Besked: Brugeren findes ikke – kunne ikke deaktivere")
+        print("\nBesked: Brugeren findes ikke – kunne ikke deaktivere")
     
     # Then skal metoden returnere None uden at crashe
     assert result is None
@@ -179,7 +179,7 @@ def test_enable_ikke_eksisterende_bruger_returnerer_False():
     
     # Vis besked i terminalen hvis brugeren ikke findes
     if result is None:
-        print("Besked: Brugeren findes ikke – kunne ikke aktivere")
+        print("\nBesked: Brugeren findes ikke – kunne ikke aktivere")
     
     # Then skal metoden returnere None uden at crashe
     assert result is None
