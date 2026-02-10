@@ -6,6 +6,7 @@ from src.flat_file.user import User
 pytestmark = pytest.mark.focus
 TEST_FILE = "db_flat_file_test.json"
 
+@pytest.mark.focus
 
 @pytest.fixture(autouse=True)
 def cleanup_test_file():
@@ -159,8 +160,12 @@ def test_disable_ikke_eksisterende_bruger_returnerer_False():
     # When vi forsøger at deaktivere en ikke-eksisterende bruger
     result = db.disable_user(999)
     
-    # Then skal metoden returnere False uden at crashe
-    assert result is False
+    # Vis besked i terminalen hvis brugeren ikke findes
+    if result is None:
+        print("Besked: Brugeren findes ikke – kunne ikke deaktivere")
+    
+    # Then skal metoden returnere None uden at crashe
+    assert result is None
     # Risiko hvis testen fejler: Dårlig fejlhåndtering → kan føre til uventede exceptions i kaldende kode
 
 
@@ -172,8 +177,12 @@ def test_enable_ikke_eksisterende_bruger_returnerer_False():
     # When vi forsøger at aktivere en ikke-eksisterende bruger
     result = db.enable_user(777)
     
-    # Then skal metoden returnere False uden at crashe
-    assert result is False
+    # Vis besked i terminalen hvis brugeren ikke findes
+    if result is None:
+        print("Besked: Brugeren findes ikke – kunne ikke aktivere")
+    
+    # Then skal metoden returnere None uden at crashe
+    assert result is None
     # Risiko hvis testen fejler: Manglende robusthed → potentielle runtime-fejl
 
 

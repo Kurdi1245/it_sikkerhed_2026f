@@ -278,8 +278,7 @@ Nedenfor er et screenshot af kørte unit tests (pytest -v -s).
 Alle vigtige tests er grønne – de få røde er **bevidst fejlede eksempler** brugt til undervisning i test-resultat-typer (assert-fejl, exceptions, skip osv.).
 
 Unit test resultat – flat file database
-![alt text](<Skærmbillede 2026-02-10 kl. 10.31.50.png>)
-
+![alt text](<Skærmbillede 2026-02-10 kl. 11.01.09.png>)
 
 ### Udvalgte tests med risici-kommentarer
 
