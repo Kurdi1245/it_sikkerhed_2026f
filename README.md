@@ -338,3 +338,4 @@ For at opfylde GDPR-krav (især artikel 5 og 32 om dataminimering, integritet og
 
 ![alt text](<Skærmbillede 2026-02-10 kl. 12.30.12.png>)
 ![alt text](<Skærmbillede 2026-02-10 kl. 12.30.18.png>)
+![alt text](<Skærmbillede 2026-02-10 kl. 12.48.51.png>)
