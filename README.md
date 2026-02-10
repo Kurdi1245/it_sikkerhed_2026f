@@ -249,3 +249,40 @@ At sikre at MFA‑flowet ikke bliver langsommere, ustabilt eller ikke nulstiller
 UNITTEST AF MFA
 ![alt text](<Skærmbillede 2026-02-05 kl. 10.27.16.png>)
 
+
+# Flat File JSON Brugerdatabase 10 Feb 2026
+
+Dette projekt implementerer en simpel brugerdatabase, der gemmer alle data i én JSON-fil uden brug af en traditionel relationsdatabase.
+
+## Hvorfor er det smart at bruge en flat-file database (JSON-fil)?
+
+- **Ingen installation eller opsætning** – ingen database-server, ingen Docker-container, ingen cloud-tjeneste
+- **Kun Python standardbibliotek** – kræver ingen eksterne pakker (udover dataclasses som er indbygget)
+- **Meget nem at forstå og debugge** – åbn filen `db_flat_file.json` i enhver teksteditor og se alle data med det samme
+- **Perfekt til små projekter, prototyper, undervisning og PoC** – typisk < 1.000 brugere og lav skrivefrekvens
+- **100 % portabel** – kopier bare JSON-filen til en anden maskine → databasen følger med
+- **Ingen runtime-afhængigheder** – ingen process kører i baggrunden, ingen port-konflikter
+- **Menneskelæselig backup og versionering** – nem at tage backup af, nem at se ændringer i git
+
+**Begrænsninger** (når man skal overveje noget andet):  
+- Ikke egnet til mange samtidige skrivninger  
+- Ingen transaktioner / ACID-garanti  
+- Ingen indeksering → langsom ved meget store datasæt  
+- Ingen rettighedsstyring / brugeradgangskontrol  
+
+→ Derfor: **Flat-file JSON er smart til læringsformål, små applikationer og hurtige prototyper** – men ikke til produktion med høj belastning.
+
+## Unit tests – bevis for at databasen virker
+
+Nedenfor er et screenshot af kørte unit tests (pytest -v -s).  
+Alle vigtige tests er grønne – de få røde er **bevidst fejlede eksempler** brugt til undervisning i test-resultat-typer (assert-fejl, exceptions, skip osv.).
+
+Unit test resultat – flat file database
+![alt text](<Skærmbillede 2026-02-10 kl. 10.31.50.png>)
+
+
+### Udvalgte tests med risici-kommentarer
+
+Her er nogle af de tests med **Given → When → Then**-struktur og en kort risikovurdering:
+
+![alt text](<Skærmbillede 2026-02-10 kl. 10.39.11.png>)

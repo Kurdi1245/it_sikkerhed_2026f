@@ -4,7 +4,7 @@
         {
             "label": "pytest run all",
             "type": "shell",
-            "command": "cls; pytest -v -s",
+            "command": "clear; pytest -v -s",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
@@ -15,7 +15,7 @@
             "label": "pytest run only focus",
             "detail": "Runs only tests marked with @pytest.mark.focus",
             "type": "shell",
-            "command": "cls; pytest -v -s -m focus",
+            "command": "clear; pytest -v -s -m focus",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
