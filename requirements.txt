@@ -1,1 +1,3 @@
 pytest>=8.0
+argon2-cffi>=23.1.0         # til Argon2id password hashing
+pycryptodome>=3.20.0        # til AES-kryptering (Crypto-modul)

@@ -1,0 +1,13 @@
+{
+  "users": [
+    {
+      "person_id": 0,
+      "first_name": "Mem",
+      "last_name": "Test",
+      "address": "RamVej",
+      "street_number": 1,
+      "password": "$argon2id$v=19$m=102400,t=2,p=8$XVIA86P/gBhGxMyGlUcVJg$tOJ1X3B5Wx+SfhfyrlTW5Bk+6F/RWfP73F3DSjOY+jQ",
+      "enabled": true
+    }
+  ]
+}

@@ -4,7 +4,6 @@ import gc
 from src.flat_file.data_handler import Data_handler
 from src.flat_file.user import User
 
-pytestmark = pytest.mark.focus
 TEST_FILE = "db_flat_file_test.json"
 @pytest.fixture(autouse=True)
 def cleanup_test_file():
@@ -12,7 +11,8 @@ def cleanup_test_file():
         os.remove(TEST_FILE)
     yield
     if os.path.exists(TEST_FILE):
-        os.remove(TEST_FILE)
+        pass
+        #os.remove(TEST_FILE)
 
 
 # ───────────────────────────────────────────────
