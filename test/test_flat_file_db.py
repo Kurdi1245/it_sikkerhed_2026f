@@ -60,7 +60,9 @@ def test_oprettet_bruger_har_korrekt_data_og_auto_id():
     user = db.get_user_by_id(0)
     assert user is not None
     assert user.person_id == 0
-    assert user.street_number == 12
+    decrypted = db.get_user_decrypted(0)
+    assert decrypted["street_number"] == 12
+
     
     # Følsomme felter skal være krypterede (ikke rå værdier)
     assert user.first_name != raw_first
@@ -229,7 +231,9 @@ def test_opret_bruger_med_minimalt_data():
     # Then skal brugeren kunne oprettes og hentes korrekt
     user = db.get_user_by_id(0)
     assert user is not None
-    assert user.street_number == 0
+    decrypted = db.get_user_decrypted(0)
+    assert decrypted["street_number"] == 0
+
     assert user.enabled is True
     # Risiko hvis testen fejler: Validering mangler → ugyldige data kan gemmes i systemet
 
@@ -296,3 +300,54 @@ def test_midertidig_password_fjernes_fra_hukommelse():
     # Bare en dummy-assert for at testen kører
     assert True
     # Risiko hvis ikke: Klartekst-password ligger i RAM → sårbar for memory-dump
+
+def test_kryptering_og_dekryptering_er_korrekt():
+    db = Data_handler(TEST_FILE)
+
+    # Rå input (kendte værdier)
+    raw_first = "Alice"
+    raw_last = "Andersen"
+    raw_address = "HemmeligVej"
+    raw_street = 77
+    raw_password = "TopSecret123!"
+
+    # Opret bruger
+    db.create_user(
+        raw_first,
+        raw_last,
+        raw_address,
+        raw_street,
+        raw_password
+    )
+
+    # Hent rå (krypteret) bruger
+    user = db.get_user_by_id(0)
+    assert user is not None
+
+    # ─────────────────────────────────────────
+    # 1️⃣ Bevis: data er IKKE gemt i klartekst
+    # ─────────────────────────────────────────
+    assert user.first_name != raw_first
+    assert user.last_name != raw_last
+    assert user.address != raw_address
+    assert user.street_number != raw_street
+
+    # Password er hashet (ikke krypteret)
+    assert user.password != raw_password
+    assert user.password.startswith("$argon2id$")
+
+    # ─────────────────────────────────────────
+    # 2️⃣ Bevis: dekryptering giver korrekt data
+    # ─────────────────────────────────────────
+    decrypted = db.get_user_decrypted(0)
+
+    assert decrypted["first_name"] == raw_first
+    assert decrypted["last_name"] == raw_last
+    assert decrypted["address"] == raw_address
+    assert decrypted["street_number"] == raw_street
+
+    # ─────────────────────────────────────────
+    # 3️⃣ Bevis: password-verifikation virker
+    # ─────────────────────────────────────────
+    assert db.verify_password(0, raw_password) is True
+    assert db.verify_password(0, "ForkertPassword") is False

@@ -338,5 +338,9 @@ For at opfylde GDPR-krav (især artikel 5 og 32 om dataminimering, integritet og
 ![alt text](<Skærmbillede 2026-02-10 kl. 13.38.25.png>) 
 ![alt text](<Skærmbillede 2026-02-10 kl. 13.38.30.png>)
 ![alt text](<Skærmbillede 2026-02-10 kl. 13.38.41.png>) 
-![alt text](<Skærmbillede 2026-02-10 kl. 13.39.00.png>) 
+![alt text](<Skærmbillede 2026-02-10 kl. 14.41.21.png>)
+
+UNIT TEST som tjekker om alt er krypteret korrekt 
+![alt text](<Skærmbillede 2026-02-10 kl. 14.43.44.png>)
+
 

@@ -81,13 +81,14 @@ class Data_handler:
         encrypted_first   = self.encrypt_field(first_name)
         encrypted_last    = self.encrypt_field(last_name)
         encrypted_address = self.encrypt_field(address)
+        encrypted_street  = self.encrypt_field(str(street_number))
 
         user = User(
             person_id=user_id,
             first_name=encrypted_first,
             last_name=encrypted_last,
             address=encrypted_address,
-            street_number=street_number,     # ikke følsomt
+            street_number=encrypted_street,     # ikke følsomt
             password=hashed_pw,
             enabled=True
         )
@@ -138,7 +139,7 @@ class Data_handler:
                 "first_name": self.decrypt_field(user.first_name),
                 "last_name": self.decrypt_field(user.last_name),
                 "address": self.decrypt_field(user.address),
-                "street_number": user.street_number,
+                "street_number": int(self.decrypt_field(user.street_number)),
                 "enabled": user.enabled
             }
         except ValueError as e:
