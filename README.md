@@ -247,8 +247,7 @@ At sikre at MFA‑flowet ikke bliver langsommere, ustabilt eller ikke nulstiller
 *   Incident response klar
 
 UNITTEST AF MFA
-![alt text](<Skærmbillede 2026-02-05 kl. 10.27.16.png>)
-
+![alt text](<Skærmbillede 2026-02-10 kl. 13.16.44.png>)
 
 # Flat File JSON Brugerdatabase 10 Feb 2026
 
