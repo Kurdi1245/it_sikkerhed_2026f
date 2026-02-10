@@ -335,6 +335,8 @@ For at opfylde GDPR-krav (især artikel 5 og 32 om dataminimering, integritet og
 - **Salt**: Håndteres automatisk af Argon2id (ingen manuel salt nødvendig).  
 - **Side-channel-beskyttelse**: Argon2id er designet til at modstå timing- og cache-angreb.
 
-![alt text](<Skærmbillede 2026-02-10 kl. 12.30.12.png>)
-![alt text](<Skærmbillede 2026-02-10 kl. 12.30.18.png>)
-![alt text](<Skærmbillede 2026-02-10 kl. 12.48.51.png>)
+![alt text](<Skærmbillede 2026-02-10 kl. 13.38.25.png>) 
+![alt text](<Skærmbillede 2026-02-10 kl. 13.38.30.png>)
+![alt text](<Skærmbillede 2026-02-10 kl. 13.38.41.png>) 
+![alt text](<Skærmbillede 2026-02-10 kl. 13.39.00.png>) 
+

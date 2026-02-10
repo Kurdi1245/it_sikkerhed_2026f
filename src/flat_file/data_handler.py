@@ -7,12 +7,24 @@ from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 import base64
 import gc
+import os
 
-# Master-nøgle til AES (I VIRKELIGHEDEN: fra os.getenv("MASTER_KEY") eller vault!)
-# DEMO: genereres hver gang – IKKE sikkert i produktion!
-MASTER_KEY = get_random_bytes(32)  # AES-256 nøgle
 
-ph = PasswordHasher(time_cost=2, memory_cost=102400, parallelism=8)  # Argon2id – juster efter din maskine
+# Master-nøgle til AES – I VIRKELIGHEDEN: fra miljøvariabel!
+MASTER_KEY_ENV = os.getenv("MASTER_AES_KEY")
+if MASTER_KEY_ENV:
+    MASTER_KEY = base64.b64decode(MASTER_KEY_ENV)
+else:
+    # Demo / udvikling – ALDRIG i produktion!
+    MASTER_KEY = get_random_bytes(32)
+    print(" Advarsel ".center(80, "="))
+    print("MASTER_KEY ikke sat i miljøvariabel → bruger midlertidig nøgle!")
+    print("Dette er usikkert og kun til test/lokalt udvikling!".center(80))
+    print("=" * 80)
+
+
+ph = PasswordHasher(time_cost=2, memory_cost=102400, parallelism=8)  # Argon2id
+
 
 class Data_handler:
     def __init__(self, flat_file_name="db_flat_file.json"):
@@ -28,36 +40,63 @@ class Data_handler:
                 return user
         return None
 
-    def create_user(self, first_name, last_name, address, street_number, password):
-        user_id = len(self.users)
-        
-        # Hash password (til login-verifikation – GDPR-sikker)
-        hashed_pw = ph.hash(password)
-        
-        # Ekstra: AES-256-GCM kryptering af rå-password (valgfrit ekstra lag)
+    def encrypt_field(self, field: str) -> str:
+        """Krypterer et tekstfelt med AES-256-GCM"""
+        if not field:
+            return ""  # eller raise ValueError, afhængig af krav
         nonce = get_random_bytes(12)
         cipher = AES.new(MASTER_KEY, AES.MODE_GCM, nonce=nonce)
-        ciphertext, tag = cipher.encrypt_and_digest(password.encode())
-        encrypted_pw = base64.b64encode(nonce + ciphertext + tag).decode('utf-8')
-        
+        ciphertext, tag = cipher.encrypt_and_digest(field.encode('utf-8'))
+        return base64.b64encode(nonce + ciphertext + tag).decode('utf-8')
+
+    def decrypt_field(self, encrypted: str) -> str:
+        """Dekrypterer et felt krypteret med encrypt_field()"""
+        if not encrypted:
+            return ""
+        try:
+            data = base64.b64decode(encrypted)
+            if len(data) < 28:  # 12 nonce + mindst 1 byte data + 16 tag
+                raise ValueError("Krypteret data er for kort")
+
+            nonce = data[:12]
+            ciphertext_tag = data[12:]
+            ciphertext = ciphertext_tag[:-16]
+            received_tag = ciphertext_tag[-16:]
+
+            cipher = AES.new(MASTER_KEY, AES.MODE_GCM, nonce=nonce)
+            plaintext = cipher.decrypt_and_verify(ciphertext, received_tag)
+            return plaintext.decode('utf-8')
+
+        except Exception as e:
+            # I produktion: log fejlen → kast generisk fejl til brugeren
+            raise ValueError("Dekryptering mislykkedes – muligvis ugyldig eller manipuleret data") from e
+
+    def create_user(self, first_name, last_name, address, street_number, password):
+        user_id = len(self.users)
+
+        # Hash password (zero-knowledge)
+        hashed_pw = ph.hash(password)
+
+        # Krypter følsomme felter
+        encrypted_first   = self.encrypt_field(first_name)
+        encrypted_last    = self.encrypt_field(last_name)
+        encrypted_address = self.encrypt_field(address)
+
         user = User(
             person_id=user_id,
-            first_name=first_name,
-            last_name=last_name,
-            address=address,
-            street_number=street_number,
-            password=hashed_pw,           # ← gem kun hash til normal brug
+            first_name=encrypted_first,
+            last_name=encrypted_last,
+            address=encrypted_address,
+            street_number=street_number,     # ikke følsomt
+            password=hashed_pw,
             enabled=True
         )
-        
-        # Valgfrit: gem krypteret version som ekstra attribut (hvis admin skal kunne se)
-        # user.encrypted_password = encrypted_pw
-        
+
         self.users.append(user)
         self.flat_file_loader.save_memory_database_to_file(self.users)
 
-        # Ryd midlertidig data fra hukommelsen
-        del password
+        # Ryd midlertidige data fra hukommelsen
+        del password, first_name, last_name, address
         gc.collect()
 
     def disable_user(self, user_id: int):
@@ -77,21 +116,38 @@ class Data_handler:
         user = self.get_user_by_id(user_id)
         if not user:
             return False
-        
+
         try:
             ph.verify(user.password, provided_password)
-            # Ryd straks
-            del provided_password
-            gc.collect()
             return True
         except VerifyMismatchError:
+            return False
+        finally:
+            # Ryd altid den indtastede værdi
             del provided_password
             gc.collect()
-            return False
 
-    # Eksempel på update-metode (med save)
-    def update_first_name(self, user_id, new_first_name):
+    def get_user_decrypted(self, user_id: int):
+        user = self.get_user_by_id(user_id)
+        if not user:
+            return None
+
+        try:
+            return {
+                "person_id": user.person_id,
+                "first_name": self.decrypt_field(user.first_name),
+                "last_name": self.decrypt_field(user.last_name),
+                "address": self.decrypt_field(user.address),
+                "street_number": user.street_number,
+                "enabled": user.enabled
+            }
+        except ValueError as e:
+            print(f"Advarsel: Kunne ikke dekryptere bruger {user_id}: {e}")
+            return None
+
+    # Eksempel på opdateringsmetode
+    def update_first_name(self, user_id: int, new_first_name: str):
         user = self.get_user_by_id(user_id)
         if user:
-            user.first_name = new_first_name
+            user.first_name = self.encrypt_field(new_first_name)
             self.flat_file_loader.save_memory_database_to_file(self.users)
