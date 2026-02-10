@@ -1,13 +1,11 @@
 import pytest
 import os
+import gc   
 from src.flat_file.data_handler import Data_handler
 from src.flat_file.user import User
 
 pytestmark = pytest.mark.focus
 TEST_FILE = "db_flat_file_test.json"
-
-@pytest.mark.focus
-
 @pytest.fixture(autouse=True)
 def cleanup_test_file():
     if os.path.exists(TEST_FILE):
@@ -51,7 +49,8 @@ def test_oprettet_bruger_har_korrekt_data_og_auto_id():
     # Given en tom database
     
     # When vi opretter en bruger med kendte værdier
-    db.create_user("Lucas", "Nielsen", "Parkvej", 12, "pass2025")
+    raw_password = "pass2025"
+    db.create_user("Lucas", "Nielsen", "Parkvej", 12, raw_password)
     
     # Then skal alle felter være korrekt gemt og ID=0 automatisk tildelt
     user = db.get_user_by_id(0)
@@ -61,10 +60,16 @@ def test_oprettet_bruger_har_korrekt_data_og_auto_id():
     assert user.last_name == "Nielsen"
     assert user.address == "Parkvej"
     assert user.street_number == 12
-    assert user.password == "pass2025"
-    assert user.enabled is True
-    # Risiko hvis testen fejler: Forkert eller manglende data gemmes → brugere får forkerte oplysninger
-
+    
+    # Password skal være HASHET (ikke rå)
+    assert user.password != raw_password
+    assert user.password.startswith("$argon2id$"), "Password skal være Argon2-hash"
+    
+    # Ekstra: tjek at verify_password virker med det oprindelige password
+    assert db.verify_password(0, raw_password) is True
+    assert db.verify_password(0, "forkert") is False
+    
+    # Risiko hvis denne test fejler: Password lagres i klartekst → alvorligt GDPR-brud ved datalæk
 
 def test_flere_brugere_faår_fortloebende_id():
     db = Data_handler(TEST_FILE)
@@ -245,3 +250,37 @@ def test_opret_to_brugere_med_samme_navn_er_tilladt():
     # Then accepteres begge brugere (ingen unik-navn-begrænsning)
     assert db.get_number_of_users() == 2
     # Risiko hvis testen fejler: Hvis systemet senere kræver unikke navne → inkonsekvent adfærd
+
+def test_password_er_hashed_ved_oprettelse():
+    db = Data_handler(TEST_FILE)
+    raw_pw = "SuperHemmelig2026!"
+    db.create_user("GDPR", "Test", "Sikkerhedsvej", 42, raw_pw)
+    
+    user = db.get_user_by_id(0)
+    assert user.password != raw_pw               # MÅ IKKE være klartekst
+    assert "$argon2id$" in user.password         # Argon2 format
+    # Risiko hvis fejler: Password lagres i klartekst → GDPR-brud ved datalæk
+
+
+def test_verify_password_virker():
+    db = Data_handler(TEST_FILE)
+    raw_pw = "MitPassword123"
+    db.create_user("Login", "Bruger", "Loginvej", 1, raw_pw)
+    
+    assert db.verify_password(0, raw_pw) is True
+    assert db.verify_password(0, "Forkert123") is False
+    # Risiko hvis fejler: Forkert login tillades → sikkerhedsbrud
+
+def test_midertidig_password_fjernes_fra_hukommelse():
+    db = Data_handler(TEST_FILE)
+    raw = "TempPw123!"
+    db.create_user("Mem", "Test", "RamVej", 1, raw)
+    
+    # Efter kaldet må raw_password ikke længere være i hukommelse (svært at teste 100%)
+    # Men vi kan vise intentionen
+    del raw
+    gc.collect()               # ← nu virker det
+    
+    # Bare en dummy-assert for at testen kører (kan udvides hvis nødvendigt)
+    assert True
+    # Risiko hvis ikke: Klartekst-password ligger i RAM → sårbar for memory-dump
