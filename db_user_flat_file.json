@@ -1,0 +1,22 @@
+{
+  "admin": {
+    "username": "admin",
+    "password": "5cLnYYMI9fe7KrnNJ9xtIgkX8YyothUXFjTeTMaZgF6AKChYk1krzBZ3I76Py5a0",
+    "first_name": "gAAAAABpluXhMBk4v0Yw8kd5DVZZqm_rWg5-Pr7oiIhAUkAhjnkLiB8_fhIrSAiSPTdnlwm1c5VTXdNmTUxf5juR6aoGiG3L7EXtzqbHPZdxmkm5vrbh8B0=",
+    "last_name": "gAAAAABpluXhHR6JFjAgfAhcWsuW9VH5cZsucyn8ZqrhUdL4fxXhQM65e2kwJH9EoiR121scnDnukqnHhbTQxqwRlAk0uTPTDQ==",
+    "active": true,
+    "roles": [
+      "admin"
+    ]
+  },
+  "anmi@anmi.dk": {
+    "username": "anmi@anmi.dk",
+    "password": "7wyYQTtyRFy9VAtXozi5ZHPQNHuz6Tsd6qAv5KX8WfQqIpXA1SeWq1tMXo4+gztP",
+    "first_name": "gAAAAABplubG0xEg431rfYvzlsrOphu8DdciHAvaCDu_lgPut7QIkN8RcOfIK_sEA4u1H3HszenBAEEJ_6WxKEdvtAYQS7bqSg==",
+    "last_name": "gAAAAABplubGedC-sjUxshbmoAO7p-R7FCgcCPM7FyLhQw_X9dSt7ofu2NGMzsKY1wKa3Am2t7AKpb07jVeDC6yARP3UPp1SwA==",
+    "active": true,
+    "roles": [
+      "user"
+    ]
+  }
+}
