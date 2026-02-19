@@ -387,3 +387,85 @@ API’en kan testes via **Swagger UI**:
 
 Her kan du oprette, læse, opdatere og slette brugere interaktivt.
 
+
+
+## Authorization REST API
+
+Dette modul implementerer et REST API til **brugeradministration og authorization** med JWT-baserede security tokens. API'et er bygget med **FastAPI** og gemmer data i en **flat file JSON-database**.
+
+---
+
+### Funktioner og test
+
+#### 1. Standard admin-bruger oprettes automatisk
+- Hvis databasen er tom, oprettes en admin-bruger med rollen `admin`.
+- Brug denne admin-bruger til at logge ind og teste tokenfunktionalitet.
+![alt text](<Skærmbillede 2026-02-19 kl. 12.27.21.png>)
+
+
+---
+
+#### 2. Opret nye brugere
+- Endpoint: `/register_user`  
+- POST med `username`, `password`, `first_name`, `last_name`, `roles`.
+
+![alt text](<Skærmbillede 2026-02-19 kl. 11.32.44.png>) 
+![alt text](<Skærmbillede 2026-02-19 kl. 11.32.50.png>)
+
+---
+
+#### 3. Hent security token
+- Endpoint: `/get_bearer_token`  
+- POST med `username` og `password` for at modtage JWT-token.
+
+![alt text](<Skærmbillede 2026-02-19 kl. 11.33.38.png>) 
+![alt text](<Skærmbillede 2026-02-19 kl. 11.33.45.png>)
+
+---
+
+#### 4. Skift kodeord
+- Endpoint: `/change_password`  
+- POST med token i header og nyt password i body.
+
+![alt text](<Skærmbillede 2026-02-19 kl. 12.21.41.png>) 
+![alt text](<Skærmbillede 2026-02-19 kl. 12.21.46.png>)
+
+---
+
+#### 5. Deaktivér en bruger
+- Endpoint: `/deactivate_user`  
+- Brugeren kan deaktivere sig selv. Kræver token i header.
+
+![alt text](<Skærmbillede 2026-02-19 kl. 11.54.15.png>) 
+![alt text](<Skærmbillede 2026-02-19 kl. 11.54.11.png>)
+
+---
+
+#### 6. Reaktivér en bruger
+- Endpoint: `/activate_user`  
+- Kun admin kan reaktivere brugere. Kræver admin-token i header.
+
+![alt text](<Skærmbillede 2026-02-19 kl. 11.55.22.png>) 
+![alt text](<Skærmbillede 2026-02-19 kl. 11.55.26.png>)
+
+---
+
+### Sikkerhed og secrets
+
+- Test-secrets til kryptering og hashing ligger i `.env` og kan versioneres i Git.  
+- Produktions-secrets skal ligge som **environment variables**.  
+![alt text](<Skærmbillede 2026-02-19 kl. 12.32.45.png>) 
+![alt text](<Skærmbillede 2026-02-19 kl. 12.33.09.png>)
+
+### Delete User
+
+
+### Get User
+
+
+---
+
+### Test via browser
+- Kør serveren:
+```bash
+uvicorn src.auth_eksempel.main:app --reload

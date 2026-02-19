@@ -1,17 +1,20 @@
 import pytest, os, json, jwt, datetime
-from fastapi import HTTPException, status
-from src.auth_eksempel.models import User, Role
+from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
-
+from src.auth_eksempel.models import User, Role
 from src.auth_eksempel.user_service import User_service
 from src.auth_eksempel.auth_service import Auth_service
-from src.auth_eksempel.models import Role
 from src.auth_eksempel.auth_rest_api import Auth_rest_api
+from src.auth_eksempel.environment_loader import Environment_loader
 
-#pytestmark = pytest.mark.focus
+# Load environment variables
+Auth_service._secret, _ = Environment_loader.load_environment_data()
+
+pytestmark = pytest.mark.focus
 
 filename = "db_test_user_flat_file.json"
+
 
 def create_default_user_file(filename:str):
     user_data = {
@@ -139,47 +142,39 @@ def test_register_new_user():
 
 def test_register_new_user_where_username_is_not_email():
     # given
-
     create_default_user_file(filename)
     user_service = User_service(filename)
 
     errorMessage = "Invalid email address"
     testDataList = [
-        {
-            "email": "a@b", 
-            "exception": None,
-        }, {
-            "email": "test@fake-mail.com", 
-            "exception": None,
-        }, {
-            "email": "test-user", 
-            "exception": errorMessage,
-        }, {
-            "email": "a@", 
-            "exception": errorMessage,
-        }, {
-            "email": '@b', 
-            "exception": errorMessage,
-        },
+        {"email": "a@b", "exception": None},
+        {"email": "test@fake-mail.com", "exception": None},
+        {"email": "test-user", "exception": errorMessage},
+        {"email": "a@", "exception": errorMessage},
+        {"email": "@b", "exception": errorMessage},
     ]
-
 
     for testData in testDataList:
         exception = None
 
         # when 
         try:
-            user_service.register_user(testData["email"], "pw", "f", "e", [Role.user])
+            user_service.register_user(
+                testData["email"], "pw", "f", "e", [Role.user]
+            )
         except HTTPException as e:
             exception = e
 
         # then
-        if testData["exception"] == None:
-            assert exception == None, f"email '{testData["email"]}' is invalid"
+        if testData["exception"] is None:
+            assert exception is None, f"Email '{testData['email']}' should be valid"
         else:
-            assert exception != None, f"email '{testData["email"]}' is valid"
+            assert exception is not None, f"Email '{testData['email']}' should be invalid"
             assert exception.status_code == 400
             assert exception.detail == testData["exception"]
+
+
+
 
 
 
@@ -222,7 +217,6 @@ def test_get_bearer_token():
 
 def test_get_bearer_token_expired():
     # given
-
     create_default_user_file(filename)
     user_service = User_service(filename)
 
@@ -230,20 +224,24 @@ def test_get_bearer_token_expired():
     payload = {
         "sub": "test-user",
         "roles": ["admin"],
-        "exp": datetime.datetime.now(datetime.UTC) + datetime.timedelta(hours=0),  # just expired
-        "iat": datetime.datetime.now(datetime.UTC),  # issued at
+        "exp": datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(seconds=1),  # already expired
+        "iat": datetime.datetime.now(datetime.timezone.utc),
     }
-    token = f"Bearer {jwt.encode(payload, Auth_service._secret, algorithm=Auth_service._algorithm)}"
+    token = jwt.encode(payload, Auth_service._secret, algorithm=Auth_service._algorithm)
+    bearer_token = f"Bearer {token}"  # <-- tilføj 'Bearer ' prefix
+
     exception = None
     try:
-        payload = Auth_service.verify_token(token)
+        Auth_service.verify_token(bearer_token)  # send med Bearer
     except HTTPException as e:
         exception = e
 
     # then
-    assert exception != None, "exception must be thrown"
+    assert exception is not None, "exception must be thrown"
     assert exception.status_code == 401
     assert exception.detail == "Token expired"
+
+
 
 
 def test_get_bearer_token_invalid():

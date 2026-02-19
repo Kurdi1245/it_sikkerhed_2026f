@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from src.auth_eksempel.user_service import User_service
 from src.auth_eksempel.models import User, Role
 from src.auth_eksempel.auth_rest_api_models import RegisterUserRequest, GetBearerTokenRequest, ActivateUserRequest
+from src.auth_eksempel.auth_service import Auth_service  # <- Manglede
 
 # Nyt Pydantic model til password-ændring
 class ChangePasswordRequest(BaseModel):
@@ -24,7 +25,7 @@ class Auth_rest_api:
         self.app.post("/get_bearer_token")(self.get_bearer_token)
         self.app.post("/deactivate_user")(self.deactivate_user)
         self.app.post("/activate_user")(self.activate_user)
-        self.app.post("/change_password")(self.change_password)
+        self.app.put("/change_password")(self.change_password)  # PUT, ikke POST
 
 
     def register_user(self, post_variables: RegisterUserRequest):
@@ -76,11 +77,21 @@ class Auth_rest_api:
         self.user_service.activate_user(token, post_variables.username)
         return { "status": f"user '{post_variables.username}' has been reactivated"}
         
-    # ----------- Nyt endpoint til password -----------
-
+    # ---------- Password endpoint ----------
     def change_password(self, post_variables: ChangePasswordRequest, token: str = Header(...)):
         if not token.startswith("Bearer "):
             raise HTTPException(status_code=401, detail="Invalid or missing Authorization header")
 
-        result = self.user_service.change_password(token, post_variables.username, post_variables.new_password)
-        return result
+        # Kald User_service til at ændre password
+        payload = Auth_service.verify_token(token)
+        acting_username = payload["sub"]
+
+        # Kun admin eller self kan ændre password
+        if acting_username != post_variables.username and not self.user_service._user_has_at_least_one_role_for_access(acting_username, [Role.admin]):
+            raise HTTPException(status_code=403, detail="Not authorized to change this password")
+
+        user = self.user_service._get_user(post_variables.username)
+        user.password = Auth_service.hash_password(post_variables.new_password)
+        self.user_service._save_database()
+
+        return {"status": f"Password for '{post_variables.username}' has been updated"}
