@@ -344,3 +344,46 @@ UNIT TEST som tjekker om alt er krypteret korrekt
 ![alt text](<Skærmbillede 2026-02-10 kl. 14.43.44.png>)
 
 
+## REST API med FastAPI
+
+Dette afsnit beskriver den nye REST API-funktionalitet, som er blevet tilføjet til projektet. API’et håndterer CRUD-operationer (Create, Read, Update, Delete) for brugere via en flat-file database (`db_flat_file.json`).
+
+### Funktioner
+
+- **Opret bruger (Create)**
+  - `POST /user`
+  - Tilføj en ny bruger med felter som `person_id`, `first_name`, `last_name`, `address`, `street_number`, `password`.
+  ![alt text](<Skærmbillede 2026-02-19 kl. 11.10.13.png>) 
+  ![alt text](<Skærmbillede 2026-02-19 kl. 11.10.19.png>)
+
+- **Læs bruger (Read)**
+  - `GET /user/{person_id}`
+  - Hent information om en specifik bruger via `person_id`.
+![alt text](<Skærmbillede 2026-02-19 kl. 11.11.02.png>) 
+![alt text](<Skærmbillede 2026-02-19 kl. 11.11.07.png>)
+
+- **Opdater bruger (Update)**
+  - `PUT /user/{person_id}`
+  - Opdater eksisterende brugerdata. Kun de felter, der sendes, bliver ændret.
+![alt text](<Skærmbillede 2026-02-19 kl. 11.13.11.png>) 
+![alt text](<Skærmbillede 2026-02-19 kl. 11.13.03.png>)
+
+- **Slet bruger (Delete)**
+  - `DELETE /user/{person_id}`
+  - Slet en bruger fra databasen.
+![alt text](<Skærmbillede 2026-02-19 kl. 11.13.46.png>) 
+![alt text](<Skærmbillede 2026-02-19 kl. 11.13.52.png>)
+
+- **Liste over brugere (List)**
+  - `GET /users`
+  - Returner en oversigt over alle brugere i databasen.
+![alt text](<Skærmbillede 2026-02-19 kl. 11.13.35.png>)
+
+### Test API
+
+API’en kan testes via **Swagger UI**:
+
+[http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+Her kan du oprette, læse, opdatere og slette brugere interaktivt.
+
