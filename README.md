@@ -460,11 +460,12 @@ Dette modul implementerer et REST API til **brugeradministration og authorizatio
 ![alt text](<Skærmbillede 2026-02-19 kl. 12.33.09.png>)
 
 ### Delete User
-
+![alt text](<Skærmbillede 2026-02-19 kl. 13.22.56.png>) 
+![alt text](<Skærmbillede 2026-02-19 kl. 13.22.51.png>)
 
 ### Get User
-
-
+![alt text](<Skærmbillede 2026-02-19 kl. 13.21.43.png>) 
+![alt text](<Skærmbillede 2026-02-19 kl. 13.21.36.png>)
 ---
 
 ### Test via browser

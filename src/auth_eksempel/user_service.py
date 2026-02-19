@@ -106,7 +106,7 @@ class User_service:
         user.password = Auth_service.hash_password(new_password)
         self._save_database()
         return {"status": f"Password for '{username}' has been updated"}
-        
+
     def get_bearer_token(self, username: str, password: str):
         user = self._user_db.get(username)
         if not user:
@@ -151,3 +151,34 @@ class User_service:
         else:
             raise HTTPException(status_code=403, detail="Admin privileges required")
 
+    def get_user(self, token: str, username: str):
+        payload = Auth_service.verify_token(token)
+        acting_username = payload["sub"]
+
+        # kun admin eller self
+        if acting_username != username and not self._user_has_at_least_one_role_for_access(acting_username, [Role.admin]):
+            raise HTTPException(status_code=403, detail="Not authorized to view this user")
+
+        user = self._get_user(username)
+        return {
+            "username": user.username,
+            "first_name": Auth_service.decrypt_data(user.first_name),
+            "last_name": Auth_service.decrypt_data(user.last_name),
+            "active": user.active,
+            "roles": [role.value for role in user.roles]
+        }
+
+    def delete_user(self, token: str, username: str):
+        payload = Auth_service.verify_token(token)
+        acting_username = payload["sub"]
+
+        # kun admin kan slette andre, self kan slette sig selv
+        if acting_username != username and not self._user_has_at_least_one_role_for_access(acting_username, [Role.admin]):
+            raise HTTPException(status_code=403, detail="Not authorized to delete this user")
+
+        if username in self._user_db:
+            del self._user_db[username]
+            self._save_database()
+            return {"status": f"User '{username}' deleted"}
+        else:
+            raise HTTPException(status_code=404, detail="User not found")
