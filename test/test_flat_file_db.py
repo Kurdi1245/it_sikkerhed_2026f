@@ -13,7 +13,7 @@ def cleanup_test_file():
         os.remove(TEST_FILE)
     yield
     #if os.path.exists(TEST_FILE):
-        #os.remove(TEST_FILE)
+      #  os.remove(TEST_FILE)
 
 
 # ───────────────────────────────────────────────
