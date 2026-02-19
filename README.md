@@ -387,6 +387,8 @@ API’en kan testes via **Swagger UI**:
 
 Her kan du oprette, læse, opdatere og slette brugere interaktivt.
 
+## UNITTEST af Auth
+![alt text](<Skærmbillede 2026-02-19 kl. 13.09.26.png>)
 
 
 ## Authorization REST API
