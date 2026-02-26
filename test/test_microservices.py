@@ -4,7 +4,7 @@ import requests
 AUTH_URL = "http://127.0.0.1:8000"
 ORDER_URL = "http://127.0.0.1:8001"
 
-pytestmark = pytest.mark.focus
+#pytestmark = pytest.mark.focus
 
 def test_full_flow():
 
