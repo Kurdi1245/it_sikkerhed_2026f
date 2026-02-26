@@ -472,3 +472,49 @@ Dette modul implementerer et REST API til **brugeradministration og authorizatio
 - Kør serveren:
 ```bash
 uvicorn src.auth_eksempel.main:app --reload
+
+### IT-Sikkerhed 2026f – Microservices med Autentifikation og Autorisering
+
+Dette projekt demonstrerer en simpel **microservices-arkitektur** med fokus på sikker autentifikation og autorisering ved hjælp af JWT-tokens (Bearer).
+
+Projektet består af to services:
+
+- **Auth Server** (port 8000)  
+  Central service til brugermanagement: registrering, login, token-udstedelse, validering af tokens, deactivate/activate brugere, password-ændring og sletning.
+
+- **Order Service** (port 8001) – **den nye microservice**  
+  Separat service, der **kun tillader adgang, hvis Auth Server validerer tokenet**.  
+  Brugere kan oprette ordrer (med produkt som query-parameter) og hente deres egne ordrer.
+
+## Arkitektur og sikkerhed
+
+- **Auth Server** udsteder JWT-tokens og tilbyder `/validate_token`-endpoint til validering (returnerer username og roles ved gyldigt token).
+- **Order Service** kontakter Auth Server ved hvert request (via `requests.get` til `/validate_token`).
+- Hvis token mangler, er ugyldigt eller ikke starter med "Bearer " → returneres 401 Unauthorized.
+- Ordrer gemmes i hukommelse (dictionary: username → liste af produkter).
+- Ingen yderligere rolle-tjek i denne version (kun autentifikation).
+
+**Teknologi-stack:**
+- FastAPI (begge services)
+- PyJWT til token-generering/validering
+- cryptography + python-dotenv til kryptering af persondata og secrets-håndtering
+- requests til service-til-service kald
+
+## Order Service – Den nye microservice
+
+**Endpoints:**
+- `POST /orders?product=<produkt>` → Opret ordre (kræver gyldigt Bearer-token i header)
+- `GET /orders` → Hent alle brugerens ordrer (kun egne, kræver gyldigt token)
+
+**Sikkerhedsmekanisme:**
+- Modtager token via header
+- Videresender til Auth Server for validering
+- Kun succesfuld validering → adgang til endpoint
+- Ved fejl → 401 Unauthorized
+
+**Swagger / OpenAPI dokumentation**
+
+Når Order Service kører:
+
+```bash
+uvicorn order.main:app --port 8001 --reload   # tilpas sti til din Order Service-fil
