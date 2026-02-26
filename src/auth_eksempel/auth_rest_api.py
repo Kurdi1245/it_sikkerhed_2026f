@@ -37,7 +37,7 @@ class Auth_rest_api:
         self.app.put("/change_password")(self.change_password)  # PUT, ikke POST
         self.app.get("/get_user")(self.get_user)
         self.app.delete("/delete_user/{username}")(self.delete_user)  # DELETE med path
-
+        self.app.get("/validate_token")(self.validate_token)
 
     def register_user(self, post_variables: RegisterUserRequest):
         self.user_service.register_user(
@@ -48,18 +48,7 @@ class Auth_rest_api:
             post_variables.roles
         )
         return { "status": "user created"}
-    def change_password(self, token: str, username: str, new_password: str):
-        payload = Auth_service.verify_token(token)
-        acting_username = payload["sub"]
 
-        # Only admin or self can change password
-        if acting_username != username and not self._user_has_at_least_one_role_for_access(acting_username, [Role.admin]):
-            raise HTTPException(status_code=403, detail="Not authorized to change this password")
-
-        user = self._get_user(username)
-        user.password = Auth_service.hash_password(new_password)
-        self._save_database()
-        return {"status": f"Password for '{username}' has been updated"}
         
     def get_bearer_token(self, post_variables: GetBearerTokenRequest):
         token = self.user_service.get_bearer_token(post_variables.username, post_variables.password)
@@ -146,3 +135,13 @@ class Auth_rest_api:
             return {"status": f"User '{username}' deleted"}
         else:
             raise HTTPException(status_code=404, detail="User not found")
+            
+    def validate_token(self, token: str = Header(...)):
+        if not token.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="Invalid token")
+
+        payload = Auth_service.verify_token(token)
+        return {
+            "username": payload["sub"],
+            "roles": payload["roles"]
+        }

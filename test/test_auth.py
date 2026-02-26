@@ -11,7 +11,7 @@ from src.auth_eksempel.environment_loader import Environment_loader
 # Load environment variables
 Auth_service._secret, _ = Environment_loader.load_environment_data()
 
-pytestmark = pytest.mark.focus
+#pytestmark = pytest.mark.focus
 
 filename = "db_test_user_flat_file.json"
 

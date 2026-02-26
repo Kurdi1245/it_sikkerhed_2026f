@@ -28,7 +28,7 @@ class Auth_service:
 
     @staticmethod
     def hmac_hash(password: str) -> str:
-        return hmac.new(AuthService._secret, password.encode(), hashlib.sha256).hexdigest()
+        return hmac.new(Auth_Service._secret, password.encode(), hashlib.sha256).hexdigest()
 
 
     # Symmetric enrcyption
