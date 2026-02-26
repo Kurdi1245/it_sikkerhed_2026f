@@ -487,7 +487,7 @@ Projektet består af to services:
 - **Order Service** (port 8001) – **den nye microservice**  
   Separat service, der **kun tillader adgang, hvis Auth Server validerer tokenet**.  
   Brugere kan oprette ordrer (med produkt som query-parameter) og hente deres egne ordrer.
-![alt text](<Skærmbillede 2026-02-26 kl. 11.34.43.png>)
+![alt text](<Skærmbillede 2026-02-26 kl. 11.44.21.png>)
 
 ## Arkitektur og sikkerhed
 
