@@ -471,7 +471,8 @@ Dette modul implementerer et REST API til **brugeradministration og authorizatio
 ### Test via browser
 - Kør serveren:
 ```bash
-uvicorn src.auth_eksempel.main:app --reload
+uvicorn src.auth_eksempel.main:app --reload 
+```
 
 ### IT-Sikkerhed 2026f – Microservices med Autentifikation og Autorisering
 
@@ -481,10 +482,12 @@ Projektet består af to services:
 
 - **Auth Server** (port 8000)  
   Central service til brugermanagement: registrering, login, token-udstedelse, validering af tokens, deactivate/activate brugere, password-ændring og sletning.
+  ![alt text](<Skærmbillede 2026-02-26 kl. 11.34.37.png>)
 
 - **Order Service** (port 8001) – **den nye microservice**  
   Separat service, der **kun tillader adgang, hvis Auth Server validerer tokenet**.  
   Brugere kan oprette ordrer (med produkt som query-parameter) og hente deres egne ordrer.
+![alt text](<Skærmbillede 2026-02-26 kl. 11.34.43.png>)
 
 ## Arkitektur og sikkerhed
 
@@ -512,9 +515,16 @@ Projektet består af to services:
 - Kun succesfuld validering → adgang til endpoint
 - Ved fejl → 401 Unauthorized
 
-**Swagger / OpenAPI dokumentation**
+**Dokumentation**
 
-Når Order Service kører:
 
-```bash
-uvicorn order.main:app --port 8001 --reload   # tilpas sti til din Order Service-fil
+### Test Resultat
+![alt text](<Skærmbillede 2026-02-26 kl. 11.10.11.png>)
+
+## OPRET ORDER
+![alt text](<Skærmbillede 2026-02-26 kl. 11.09.14.png>) 
+![alt text](<Skærmbillede 2026-02-26 kl. 11.09.18.png>)
+
+## GET ORDER
+![alt text](<Skærmbillede 2026-02-26 kl. 11.09.26.png>) 
+![alt text](<Skærmbillede 2026-02-26 kl. 11.09.30.png>)
