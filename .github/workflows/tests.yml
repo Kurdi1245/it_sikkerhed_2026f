@@ -35,5 +35,5 @@ jobs:
       run: pip list
 
     - name: Kør pytest
-      run: pytest test/ --verbose --cov=. --cov-report=term-missing
+      run: pytest test/ --verbose
       # --cov=. viser hvilke filer der mangler test – meget nyttigt
