@@ -7,3 +7,4 @@ uvicorn
 requests
 httpx           # optional, good for FastAPI testing
 cryptography
+python-dotenv
