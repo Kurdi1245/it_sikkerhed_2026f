@@ -528,3 +528,162 @@ Projektet består af to services:
 ## GET ORDER
 ![alt text](<Skærmbillede 2026-02-26 kl. 11.09.26.png>) 
 ![alt text](<Skærmbillede 2026-02-26 kl. 11.09.30.png>)
+
+# Log og Monitorering
+
+Et Python/FastAPI projekt med logging, Prometheus og Grafana.
+
+---
+
+## Teknologier
+
+- **FastAPI** — REST API med login endpoint
+- **Python Logger** — logger hændelser til `app_log.ndjson`
+- **Prometheus** — scraper `/metrics` hvert 15. sekund
+- **Grafana** — visualiserer data fra Prometheus
+
+---
+
+## Mappestruktur
+
+```
+monitoring_project/
+├── main.py                  # FastAPI app
+├── logger.py                # Logger (fra lærer)
+├── Dockerfile               # Bygger app containeren
+├── docker-compose.yml       # Starter hele stacken
+├── requirements.txt
+├── prometheus/
+│   └── prometheus.yml       # Prometheus konfiguration
+└── grafana/
+    └── provisioning/
+        └── datasources/
+            └── prometheus.yml
+```
+
+---
+
+## Kom i gang
+
+### Krav
+- Docker Desktop installeret
+
+### Start
+
+```bash
+docker compose up --build
+```
+
+### Stop
+
+```bash
+docker compose down
+```
+
+---
+
+## Endpoints
+
+| URL | Beskrivelse |
+|-----|-------------|
+| http://localhost:8000 | API root |
+| http://localhost:8000/docs | Swagger UI — test endpoints her |
+| http://localhost:8000/metrics | Prometheus metrics |
+| http://localhost:9090 | Prometheus UI |
+| http://localhost:3000 | Grafana (admin / admin) |
+
+---
+
+## Logging
+
+Applikationen logger til `app_log.ndjson` i ndjson format. Hver linje er et JSON objekt:
+
+```json
+{"asctime": "2026-04-28 11:10:01", "levelname": "INFO", "message": "Login lykkedes", "username": "alice"}
+{"asctime": "2026-04-28 11:10:05", "levelname": "ERROR", "message": "Login fejlede - forkert kodeord", "http_error_code": 401, "username": "alice"}
+```
+
+### Log niveauer
+
+| Niveau | Hvornår |
+|--------|---------|
+| INFO | Vellykket login, API kald |
+| ERROR | Fejlet login, HTTP fejl |
+
+---
+
+## Test af login
+
+Gå til **http://localhost:8000/docs** og prøv:
+
+**Vellykket login:**
+```json
+{
+  "username": "alice",
+  "password": "password123"
+}
+```
+
+**Fejlet login:**
+```json
+{
+  "username": "alice",
+  "password": "forkert"
+}
+```
+
+---
+
+## Screenshots
+
+### Swagger UI — test af endpoints
+
+> ![alt text](<Skærmbillede 2026-04-28 kl. 11.18.30.png>)
+![alt text](<Skærmbillede 2026-04-28 kl. 11.19.12.png>) 
+![alt text](<Skærmbillede 2026-04-28 kl. 11.19.20.png>) 
+![alt text](<Skærmbillede 2026-04-28 kl. 11.19.27.png>) 
+![alt text](<Skærmbillede 2026-04-28 kl. 11.19.35.png>)
+---
+
+### app_log.ndjson — log fil
+
+> ![alt text](<Skærmbillede 2026-04-28 kl. 11.27.46.png>)
+
+---
+
+### Prometheus — metrics
+
+> ![alt text](<Skærmbillede 2026-04-28 kl. 11.19.56.png>)
+
+---
+### Prometheus 
+
+> ![alt text](<Skærmbillede 2026-04-28 kl. 11.20.25.png>) 
+![alt text](<Skærmbillede 2026-04-28 kl. 11.20.38.png>)
+
+---
+
+
+### Prometheus UI — targets
+
+> ![alt text](<Skærmbillede 2026-04-28 kl. 11.34.56.png>)
+
+---
+
+### Grafana — dashboard
+
+> ![alt text](<Skærmbillede 2026-04-28 kl. 11.25.49.png>)
+
+---
+
+## Forskel på logging og monitorering
+
+**Logging** registrerer hvad der skete og hvornår — det skrives til en fil og gemmes.
+
+**Monitorering** giver et overblik over systemets tilstand *lige nu* og *over tid* — det bruges til at opdage fejl og mønstre hurtigt.
+
+I dette projekt:
+- `logger.py` skriver hændelser til `app_log.ndjson`
+- `/metrics` endpoint opsummerer loggen til Prometheus format
+- Prometheus scraper `/metrics` hvert 15. sekund og gemmer historik
+- Grafana visualiserer historikken som grafer
